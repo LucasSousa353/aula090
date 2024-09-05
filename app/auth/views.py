@@ -37,7 +37,7 @@ def login():
             if next is None or not next.startswith('/'):
                 next = url_for('main.index')
             return redirect(next)
-        flash('Invalid email or password.')
+        flash('Email ou senha inválidos.')
     return render_template('auth/login.html', form=form)
 
 
@@ -45,7 +45,7 @@ def login():
 @login_required
 def logout():
     logout_user()
-    flash('You have been logged out.')
+    flash('Você deslogou.')
     return redirect(url_for('main.index'))
 
 
@@ -61,8 +61,8 @@ def register():
         token = user.generate_confirmation_token()
         send_email(user.email, 'Confirm Your Account',
                    'auth/email/confirm', user=user, token=token)
-        flash('A confirmation email has been sent to you by email.')
-        flash('<p>To confirm your account <a href="' + url_for('auth.confirm', token=token, _external=True) + '">click here</a></p>')
+        flash('Um email de confirmação foi encaminhado para o seu e-mail.')
+        flash('<p>Para confirmar sua conta <a href="' + url_for('auth.confirm', token=token, _external=True) + '">clique aqui</a></p>')
         return redirect(url_for('auth.login'))
     return render_template('auth/register.html', form=form)
 
@@ -74,9 +74,9 @@ def confirm(token):
         return redirect(url_for('main.index'))
     if current_user.confirm(token):
         db.session.commit()
-        flash('You have confirmed your account. Thanks!')
+        flash('Você confirmou sua conta. Obrigado!')
     else:
-        flash('The confirmation link is invalid or has expired.')
+        flash('O email de confirmação é inválido ou está expirado.')
     return redirect(url_for('main.index'))
 
 
@@ -86,8 +86,8 @@ def resend_confirmation():
     token = current_user.generate_confirmation_token()
     send_email(current_user.email, 'Confirm Your Account',
                'auth/email/confirm', user=current_user, token=token)
-    flash('A new confirmation email has been sent to you by email.')
-    flash('<p>To confirm your account <a href="' + url_for('auth.confirm', token=token, _external=True) + '">click here</a></p>')
+    flash('Um novo e-mail de confirmação foi encaminhado.')
+    flash('<p>Para confirmar sua conta <a href="' + url_for('auth.confirm', token=token, _external=True) + '">clique aqui</a></p>')
     return redirect(url_for('main.index'))
 
 
@@ -100,10 +100,10 @@ def change_password():
             current_user.password = form.password.data
             db.session.add(current_user)
             db.session.commit()
-            flash('Your password has been updated.')
+            flash('Sua senha foi alterada.')
             return redirect(url_for('main.index'))
         else:
-            flash('Invalid password.')
+            flash('Senha inválida.')
     return render_template("auth/change_password.html", form=form)
 
 
@@ -119,9 +119,9 @@ def password_reset_request():
             send_email(user.email, 'Reset Your Password',
                        'auth/email/reset_password',
                        user=user, token=token)
-        flash('An email with instructions to reset your password has been '
-              'sent to you.')
-        flash('<p>To reset your password <a href="' + url_for('auth.password_reset', token=token, _external=True) + '">click here</a></p>')
+        flash('Um e-mail com as instruções de redefinição de senha foi'
+              'enviado para você')
+        flash('<p>Para redefinir sua senha <a href="' + url_for('auth.password_reset', token=token, _external=True) + '">clique aqui</a></p>')
         return redirect(url_for('auth.login'))
     return render_template('auth/reset_password.html', form=form)
 
@@ -134,7 +134,7 @@ def password_reset(token):
     if form.validate_on_submit():
         if User.reset_password(token, form.password.data):
             db.session.commit()
-            flash('Your password has been updated.')
+            flash('Sua senha foi atualizada.')
             return redirect(url_for('auth.login'))
         else:
             return redirect(url_for('main.index'))
@@ -152,12 +152,12 @@ def change_email_request():
             send_email(new_email, 'Confirm your email address',
                        'auth/email/change_email',
                        user=current_user, token=token)
-            flash('An email with instructions to confirm your new email '
-                  'address has been sent to you.')
-            flash('<p>To confirm your new email address <a href="' + url_for('auth.change_email', token=token, _external=True) + '">click here</a></p>')
+            flash('Um email com as instruções para confirmar seu novo '
+                  'endereço de e-mail foi encaminhado para você.')
+            flash('<p>Para confirmar seu novo e-mail <a href="' + url_for('auth.change_email', token=token, _external=True) + '">clique aqui</a></p>')
             return redirect(url_for('main.index'))
         else:
-            flash('Invalid email or password.')
+            flash('Email ou senha inválidos.')
     return render_template("auth/change_email.html", form=form)
 
 
@@ -166,7 +166,7 @@ def change_email_request():
 def change_email(token):
     if current_user.change_email(token):
         db.session.commit()
-        flash('Your email address has been updated.')
+        flash('Seu email foi atualizado.')
     else:
-        flash('Invalid request.')
+        flash('Requisição inválida.')
     return redirect(url_for('main.index'))
