@@ -33,3 +33,6 @@ def create_app(config_name):
     app.register_blueprint(auth_blueprint, url_prefix='/auth')
 
     return app
+
+if __name__ == '__main__':
+    app.run(debug=True)
